@@ -7,9 +7,11 @@ import { ReturnScreen } from './screens/ReturnScreen.jsx';
 import { SummaryScreen } from './screens/SummaryScreen.jsx';
 import { StaffDashboard } from './screens/StaffDashboard.jsx';
 import { GateSimulator } from './screens/GateSimulator.jsx';
+import { FaceLivenessScreen } from './screens/FaceLivenessScreen.jsx';
 import { KeypadModal } from './components/KeypadModal.jsx';
 import { SessionTimeoutModal } from './components/SessionTimeoutModal.jsx';
 import { api, setForceMock } from './api/index.js';
+import { DEMO_CONFIG } from './demoIds.js';
 import { useScanner } from './hooks/useScanner.js';
 import { translations } from './i18n.js';
 import { playSuccessSound, playErrorSound, playScanBeep } from './utils/audio.js';
@@ -495,12 +497,13 @@ export function App() {
         )}
 
         {screen === 'face' && (
-          <div className="p-8 text-center">
-            <h2 className="text-3xl font-bold">Face Login with Liveness (P2 Route)</h2>
-            <button onClick={() => setScreen('idle')} className="mt-4 px-6 py-3 bg-nfsu-navy text-white rounded-xl">
-              Back to Kiosk
-            </button>
-          </div>
+          <FaceLivenessScreen
+            onVerified={() => {
+              handleIdentifyPatron(DEMO_CONFIG.patrons[0]?.id || 'NFSU2026001', 'face');
+            }}
+            onCancel={() => setScreen('idle')}
+            lang={lang}
+          />
         )}
       </main>
 

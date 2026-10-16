@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Shield, ShieldAlert, ShieldCheck, ArrowLeft, Send, Sparkles, Volume2, AlertOctagon, CheckCircle2 } from 'lucide-react';
 import { api } from '../api/index.js';
 import { playSuccessSound, playErrorSound, playScanBeep } from '../utils/audio.js';
+import { DEMO_CONFIG } from '../demoIds.js';
 
 export function GateSimulator({ onBackToKiosk, lang = 'en' }) {
   const [barcode, setBarcode] = useState('');
@@ -183,24 +184,26 @@ export function GateSimulator({ onBackToKiosk, lang = 'en' }) {
             <button
               type="button"
               onClick={() => {
-                setBarcode('BOOK-104');
-                handlePassGate('BOOK-104');
+                const bc = DEMO_CONFIG.items[3]?.barcode || 'NFSU-B-0004';
+                setBarcode(bc);
+                handlePassGate(bc);
               }}
               className="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-xl font-mono font-bold border border-rose-300 shadow-sm"
               title="Unissued item — should trigger security alarm"
             >
-              🚨 Pass Unissued Item (BOOK-104)
+              🚨 Pass Unissued ({DEMO_CONFIG.items[3]?.barcode || 'NFSU-B-0004'})
             </button>
             <button
               type="button"
               onClick={() => {
-                setBarcode('BOOK-101');
-                handlePassGate('BOOK-101');
+                const bc = DEMO_CONFIG.items[0]?.barcode || 'NFSU-B-0001';
+                setBarcode(bc);
+                handlePassGate(bc);
               }}
               className="px-3 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-xl font-mono font-bold border border-emerald-300 shadow-sm"
               title="Issued item — passes clear"
             >
-              ✓ Pass Issued Item (BOOK-101)
+              ✓ Pass Issued ({DEMO_CONFIG.items[0]?.barcode || 'NFSU-B-0001'})
             </button>
           </div>
 

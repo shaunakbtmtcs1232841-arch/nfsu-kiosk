@@ -3,6 +3,8 @@ import { CreditCard, CornerDownLeft, Sparkles, KeyRound, Scan, ShieldCheck, Came
 import { translations } from '../i18n.js';
 import { speak } from '../utils/voice.js';
 
+import { DEMO_CONFIG } from '../demoIds.js';
+
 export function IdleScreen({
   onStartReturn,
   onOpenKeypad,
@@ -33,8 +35,8 @@ export function IdleScreen({
         
         {/* Animated Card Reader Pad Target */}
         <div 
-          onClick={() => onSimulateCard?.('NFSU1001')}
-          title="Click to simulate MIFARE card tap (Demo: NFSU1001)"
+          onClick={() => onSimulateCard?.(DEMO_CONFIG.patrons[0]?.id || 'NFSU2026001')}
+          title={`Click to simulate MIFARE card tap (Demo: ${DEMO_CONFIG.patrons[0]?.id})`}
           className="relative cursor-pointer group mb-8"
         >
           {/* Pulsing NFC Rings */}
@@ -60,30 +62,23 @@ export function IdleScreen({
           {t.tapCardSub}
         </p>
 
-        {/* Fast Demo Shortcuts for evaluators */}
+        {/* Fast Demo Shortcuts configured via demoIds.js */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-sm">
           <span className="text-slate-500 font-medium">Quick Demo Tap:</span>
-          <button
-            type="button"
-            onClick={() => onSimulateCard?.('NFSU1001')}
-            className="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-semibold border border-slate-300 shadow-sm"
-          >
-            Aarav (Student 1001)
-          </button>
-          <button
-            type="button"
-            onClick={() => onSimulateCard?.('NFSU1002')}
-            className="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-semibold border border-slate-300 shadow-sm"
-          >
-            Dr. Priya (Faculty 1002)
-          </button>
-          <button
-            type="button"
-            onClick={() => onSimulateCard?.('BLOCKED')}
-            className="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-lg font-semibold border border-rose-300 shadow-sm"
-          >
-            Blocked Card
-          </button>
+          {DEMO_CONFIG.patrons.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => onSimulateCard?.(p.id)}
+              className={`px-3 py-1.5 rounded-lg font-semibold border shadow-sm transition-transform active:scale-95 ${
+                p.blocked
+                  ? 'bg-rose-100 hover:bg-rose-200 text-rose-800 border-rose-300'
+                  : 'bg-slate-200 hover:bg-slate-300 text-slate-800 border-slate-300'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
       </div>
 

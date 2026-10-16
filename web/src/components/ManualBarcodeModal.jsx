@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Barcode, ArrowRight } from 'lucide-react';
 import { translations } from '../i18n.js';
 import { playScanBeep } from '../utils/audio.js';
+import { DEMO_CONFIG } from '../demoIds.js';
 
 export function ManualBarcodeModal({ isOpen, onClose, onSubmit, lang = 'en' }) {
   const [barcode, setBarcode] = useState('');
@@ -46,14 +47,14 @@ export function ManualBarcodeModal({ isOpen, onClose, onSubmit, lang = 'en' }) {
 
           <div className="flex flex-wrap gap-2 mb-6">
             <span className="text-sm font-semibold text-slate-500 w-full">Quick Test Barcodes:</span>
-            {['BOOK-101', 'BOOK-102', 'BOOK-103', 'BOOK-104'].map((b) => (
+            {DEMO_CONFIG.items.slice(0, 4).map((b) => (
               <button
-                key={b}
+                key={b.barcode}
                 type="button"
-                onClick={() => setBarcode(b)}
+                onClick={() => setBarcode(b.barcode)}
                 className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-mono font-bold text-slate-800 border"
               >
-                {b}
+                {b.barcode}
               </button>
             ))}
           </div>

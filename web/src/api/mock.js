@@ -1,28 +1,26 @@
 // In-memory mock server for NFSU Kiosk matching Koha SIP2 backend API contract
-import { formatSipDate } from '../utils/format.js';
+import { DEMO_CONFIG } from '../demoIds.js';
 
 const BOOKS = {
-  'BOOK-101': { title: 'Forensic Ballistics & Firearms Identification', author: 'Dr. B. R. Sharma', dewey: '363.25' },
-  'BOOK-102': { title: 'Principles of Forensic Medicine & Toxicology', author: 'Dr. K. S. Reddy', dewey: '614.19' },
-  'BOOK-103': { title: 'Digital Forensics & Cyber Crime Analysis', author: 'E. Casey', dewey: '005.82' },
-  'BOOK-104': { title: 'Handbook of Fingerprint Recognition & Biometrics', author: 'D. Maltoni', dewey: '006.4' },
-  'BOOK-105': { title: 'DNA Profiling in Criminal Investigations', author: 'J. M. Butler', dewey: '572.86' },
-  'BOOK-106': { title: 'Cyber Incident Response & Malware Analysis', author: 'M. Ligh', dewey: '005.8' },
-  'BOOK-107': { title: 'Forensic Odontology & Victim Identification', author: 'G. Willems', dewey: '614.1' },
+  'NFSU-B-0001': { title: 'Forensic Ballistics & Firearms Identification', author: 'Dr. B. R. Sharma' },
+  'NFSU-B-0002': { title: 'Principles of Forensic Medicine & Toxicology', author: 'Dr. K. S. Reddy' },
+  'NFSU-B-0003': { title: 'Digital Forensics & Cyber Crime Analysis', author: 'E. Casey' },
+  'NFSU-B-0004': { title: 'Fingerprint Recognition & Biometrics', author: 'D. Maltoni' },
+  'NFSU-B-0005': { title: 'DNA Profiling in Criminal Investigations', author: 'J. M. Butler' },
 };
 
 // Items currently issued (used by security gate simulator)
-const issuedItems = new Set(['BOOK-101', 'BOOK-102']);
+const issuedItems = new Set(['NFSU-B-0001', 'NFSU-B-0002']);
 
 const PATRONS = {
-  'NFSU1001': {
-    id: 'NFSU1001',
+  'NFSU2026001': {
+    id: 'NFSU2026001',
     displayName: 'Aarav Sharma',
-    maskedId: 'NF••••1001',
+    maskedId: 'NF••••6001',
     program: 'M.Sc. Forensic Science (Sem III)',
     chargedItems: [
-      { barcode: 'BOOK-101', title: 'Forensic Ballistics & Firearms Identification', dueDate: '20261028    235959' },
-      { barcode: 'BOOK-102', title: 'Principles of Forensic Medicine & Toxicology', dueDate: '20261012    235959' },
+      { barcode: 'NFSU-B-0001', title: 'Forensic Ballistics & Firearms Identification', dueDate: '20261028    235959' },
+      { barcode: 'NFSU-B-0002', title: 'Principles of Forensic Medicine & Toxicology', dueDate: '20261012    235959' },
     ],
     chargedCount: 2,
     overdueCount: 1,
@@ -31,13 +29,13 @@ const PATRONS = {
     messages: ['Please clear overdue fine of ₹50.00 at the library desk.'],
     status: 'ACTIVE',
   },
-  'NFSU1002': {
-    id: 'NFSU1002',
+  'NFSU2026002': {
+    id: 'NFSU2026002',
     displayName: 'Dr. Priya Patel',
-    maskedId: 'NF••••1002',
+    maskedId: 'NF••••6002',
     program: 'Faculty — School of Cyber Security',
     chargedItems: [
-      { barcode: 'BOOK-103', title: 'Digital Forensics & Cyber Crime Analysis', dueDate: '20261120    235959' },
+      { barcode: 'NFSU-B-0003', title: 'Digital Forensics & Cyber Crime Analysis', dueDate: '20261120    235959' },
     ],
     chargedCount: 1,
     overdueCount: 0,
@@ -46,9 +44,9 @@ const PATRONS = {
     messages: ['Welcome to NFSU Central Library Kiosk.'],
     status: 'ACTIVE',
   },
-  'BLOCKED': {
-    id: 'BLOCKED',
-    displayName: 'Blocked Patron',
+  'NFSU2026099': {
+    id: 'NFSU2026099',
+    displayName: 'Suspended Patron',
     status: 'BLOCKED',
   }
 };
@@ -59,13 +57,12 @@ let statsData = {
   successRate: 0.98,
   avgLatencyMs: 42,
   recent: [
-    { id: 1, type: 'checkout', barcode: 'BOOK-101', patronMask: 'NF••••1001', status: 'OK', time: '14:02:11' },
-    { id: 2, type: 'checkin', barcode: 'BOOK-104', patronMask: '—', status: 'OK', time: '13:58:34' },
-    { id: 3, type: 'renew', barcode: 'BOOK-103', patronMask: 'NF••••1002', status: 'OK', time: '13:45:00' },
+    { id: 1, type: 'checkout', barcode: 'NFSU-B-0001', patronMask: 'NF••••6001', status: 'OK', time: '14:02:11' },
+    { id: 2, type: 'checkin', barcode: 'NFSU-B-0004', patronMask: '—', status: 'OK', time: '13:58:34' },
+    { id: 3, type: 'renew', barcode: 'NFSU-B-0003', patronMask: 'NF••••6002', status: 'OK', time: '13:45:00' },
   ]
 };
 
-// Event listeners for SSE mock simulation
 const sseListeners = new Set();
 
 export function emitMockSse(event) {
@@ -79,7 +76,6 @@ export function subscribeMockSse(cb) {
   return () => sseListeners.delete(cb);
 }
 
-// Helper to calculate future date string for SIP2
 function getFutureSipDate(days = 14) {
   const d = new Date();
   d.setDate(d.getDate() + days);
@@ -98,33 +94,29 @@ export const mockBackend = {
   },
 
   async identifyPatron({ identifier, source }) {
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 350));
     const cleanId = String(identifier || '').trim().toUpperCase();
 
-    // Map common demo inputs
     let patron = PATRONS[cleanId];
     if (!patron) {
-      if (cleanId === '1001' || cleanId.endsWith('1001') || cleanId.startsWith('1001')) patron = PATRONS['NFSU1001'];
-      else if (cleanId === '1002' || cleanId.endsWith('1002') || cleanId.startsWith('1002')) patron = PATRONS['NFSU1002'];
-      else if (cleanId.includes('BLOCK')) patron = PATRONS['BLOCKED'];
-      else {
-        // Auto-generate dynamic patron for any realistic ID tapped
-        if (cleanId.length >= 4) {
-          patron = {
-            id: cleanId,
-            displayName: `Student ${cleanId.slice(-4)}`,
-            maskedId: `${cleanId.slice(0, 2)}••••${cleanId.slice(-4)}`,
-            program: 'NFSU Scholar',
-            chargedItems: [],
-            chargedCount: 0,
-            overdueCount: 0,
-            holdCount: 0,
-            feeAmount: '₹ 0.00',
-            messages: ['Card verified by Koha ILMS.'],
-            status: 'ACTIVE'
-          };
-          PATRONS[cleanId] = patron;
-        }
+      if (cleanId.includes('001')) patron = PATRONS['NFSU2026001'];
+      else if (cleanId.includes('002')) patron = PATRONS['NFSU2026002'];
+      else if (cleanId.includes('099') || cleanId.includes('BLOCK')) patron = PATRONS['NFSU2026099'];
+      else if (cleanId.length >= 4) {
+        patron = {
+          id: cleanId,
+          displayName: `Student ${cleanId.slice(-4)}`,
+          maskedId: `${cleanId.slice(0, 2)}••••${cleanId.slice(-4)}`,
+          program: 'NFSU Scholar',
+          chargedItems: [],
+          chargedCount: 0,
+          overdueCount: 0,
+          holdCount: 0,
+          feeAmount: '₹ 0.00',
+          messages: ['Card verified by Koha ILMS.'],
+          status: 'ACTIVE'
+        };
+        PATRONS[cleanId] = patron;
       }
     }
 
@@ -164,14 +156,14 @@ export const mockBackend = {
   },
 
   async checkout({ sessionToken, itemBarcode }) {
-    await new Promise((r) => setTimeout(r, 650));
+    await new Promise((r) => setTimeout(r, 450));
     const session = activeSessions.get(sessionToken);
     if (!session) {
       return { ok: false, code: 'INVALID_SESSION', message: 'Session expired. Please tap your card again.' };
     }
 
     const cleanBarcode = String(itemBarcode || '').trim().toUpperCase();
-    if (cleanBarcode === 'BOOK-999' || cleanBarcode.startsWith('ERR')) {
+    if (cleanBarcode.includes('ERR') || cleanBarcode.includes('999')) {
       return {
         ok: false,
         code: 'ITEM_NOT_FOUND',
@@ -180,7 +172,7 @@ export const mockBackend = {
     }
 
     const book = BOOKS[cleanBarcode] || {
-      title: `Forensic Document & Analysis [${cleanBarcode}]`,
+      title: `Library Material [${cleanBarcode}]`,
       author: 'NFSU Press'
     };
 
@@ -219,10 +211,10 @@ export const mockBackend = {
   },
 
   async checkin({ itemBarcode }) {
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 450));
     const cleanBarcode = String(itemBarcode || '').trim().toUpperCase();
 
-    if (cleanBarcode === 'BOOK-999' || cleanBarcode.startsWith('ERR')) {
+    if (cleanBarcode.includes('ERR') || cleanBarcode.includes('999')) {
       return {
         ok: false,
         code: 'ITEM_NOT_FOUND',
@@ -236,7 +228,6 @@ export const mockBackend = {
 
     issuedItems.delete(cleanBarcode);
 
-    // Remove from any patron who has it
     for (const p of Object.values(PATRONS)) {
       if (p.chargedItems) {
         p.chargedItems = p.chargedItems.filter((i) => i.barcode !== cleanBarcode);
@@ -244,8 +235,7 @@ export const mockBackend = {
       }
     }
 
-    // Determine sort bin based on Dewey or barcode
-    const isHold = cleanBarcode === 'BOOK-102';
+    const isHold = cleanBarcode === 'NFSU-B-0002';
     const sortBin = isHold ? 'BIN-HOLD-RESERVE' : 'BIN-MAIN-SHELVES';
     const alert = isHold ? 'Place on RESERVED / HOLD shelf for next patron' : 'Reshelve in standard stacks';
 
@@ -272,7 +262,7 @@ export const mockBackend = {
   },
 
   async renew({ sessionToken, itemBarcode }) {
-    await new Promise((r) => setTimeout(r, 550));
+    await new Promise((r) => setTimeout(r, 400));
     const session = activeSessions.get(sessionToken);
     if (!session) {
       return { ok: false, code: 'INVALID_SESSION', message: 'Session expired.' };
@@ -308,7 +298,7 @@ export const mockBackend = {
   },
 
   async renewAll({ sessionToken }) {
-    await new Promise((r) => setTimeout(r, 700));
+    await new Promise((r) => setTimeout(r, 500));
     const session = activeSessions.get(sessionToken);
     if (!session) {
       return { results: [] };
@@ -351,7 +341,6 @@ export const mockBackend = {
 
   async passGate({ itemBarcode }) {
     const cleanBarcode = String(itemBarcode || '').trim().toUpperCase();
-    // If item is still unissued (not in issuedItems), alarm triggers!
     const isIssued = issuedItems.has(cleanBarcode);
     const alarm = !isIssued;
 
@@ -372,7 +361,6 @@ export const mockBackend = {
   },
 
   async verifyFace({ sessionToken, descriptor }) {
-    // In mock mode, verify matches successfully
     return { match: true, distance: 0.28 };
   }
 };

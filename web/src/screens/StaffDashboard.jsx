@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, Radio, Activity, CheckCircle, Clock, RefreshCw, Send, ArrowLeft, Shield, AlertTriangle, Layers } from 'lucide-react';
 import { api, isMockMode, setForceMock } from '../api/index.js';
 import { playScanBeep, playSuccessSound } from '../utils/audio.js';
+import { DEMO_CONFIG } from '../demoIds.js';
 
 export function StaffDashboard({ onBackToKiosk, lang = 'en' }) {
   const [stats, setStats] = useState(null);
@@ -252,14 +253,14 @@ export function StaffDashboard({ onBackToKiosk, lang = 'en' }) {
                 Quick Tag Broadcast:
               </span>
               <div className="flex flex-wrap gap-2">
-                {['BOOK-101', 'BOOK-102', 'BOOK-103', 'BOOK-104'].map((b) => (
+                {DEMO_CONFIG.items.map((item) => (
                   <button
-                    key={b}
+                    key={item.barcode}
                     type="button"
-                    onClick={() => handleSimulateTag(b)}
+                    onClick={() => handleSimulateTag(item.barcode)}
                     className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border rounded-lg text-xs font-mono font-bold text-slate-700"
                   >
-                    📡 {b}
+                    📡 {item.barcode}
                   </button>
                 ))}
               </div>

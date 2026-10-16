@@ -4,6 +4,7 @@ import { translations } from '../i18n.js';
 import { formatSipDate } from '../utils/format.js';
 import { playSuccessSound, playErrorSound, playScanBeep } from '../utils/audio.js';
 import { ManualBarcodeModal } from '../components/ManualBarcodeModal.jsx';
+import { DEMO_CONFIG } from '../demoIds.js';
 
 export function BorrowScreen({
   sessionToken,
@@ -153,13 +154,13 @@ export function BorrowScreen({
           {/* Quick Barcode Simulator for Demo / Evaluators */}
           <div className="hidden sm:flex items-center gap-2 text-xs">
             <span className="text-slate-400 font-semibold">Simulate Scan:</span>
-            {['BOOK-103', 'BOOK-104', 'BOOK-105', 'BOOK-999'].map((bc) => (
+            {DEMO_CONFIG.items.slice(0, 4).map((item) => (
               <button
-                key={bc}
-                onClick={() => handleScanItem(bc)}
+                key={item.barcode}
+                onClick={() => handleScanItem(item.barcode)}
                 className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 font-mono font-bold rounded border text-slate-700"
               >
-                {bc}
+                {item.barcode}
               </button>
             ))}
           </div>

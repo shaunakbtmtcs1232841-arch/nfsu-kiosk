@@ -3,6 +3,7 @@ import { CornerDownLeft, CheckCircle2, XCircle, AlertTriangle, Loader2, ArrowLef
 import { translations } from '../i18n.js';
 import { playSuccessSound, playErrorSound } from '../utils/audio.js';
 import { ManualBarcodeModal } from '../components/ManualBarcodeModal.jsx';
+import { DEMO_CONFIG } from '../demoIds.js';
 
 export function ReturnScreen({
   returnedItems = [],
@@ -145,13 +146,13 @@ export function ReturnScreen({
           {/* Quick Demo Simulator */}
           <div className="hidden sm:flex items-center gap-2 text-xs">
             <span className="text-slate-400 font-semibold">Simulate Return:</span>
-            {['BOOK-101', 'BOOK-102', 'BOOK-106'].map((bc) => (
+            {DEMO_CONFIG.items.slice(0, 3).map((item) => (
               <button
-                key={bc}
-                onClick={() => handleScanReturn(bc)}
+                key={item.barcode}
+                onClick={() => handleScanReturn(item.barcode)}
                 className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 font-mono font-bold rounded border text-slate-700"
               >
-                {bc}
+                {item.barcode}
               </button>
             ))}
           </div>

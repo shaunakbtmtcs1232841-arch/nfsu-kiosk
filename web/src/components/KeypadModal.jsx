@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Delete, ArrowRight, CreditCard } from 'lucide-react';
 import { translations } from '../i18n.js';
 import { playScanBeep } from '../utils/audio.js';
+import { DEMO_CONFIG } from '../demoIds.js';
 
 export function KeypadModal({ isOpen, onClose, onSubmit, lang = 'en' }) {
   const [value, setValue] = useState('');
@@ -72,18 +73,27 @@ export function KeypadModal({ isOpen, onClose, onSubmit, lang = 'en' }) {
             )}
           </div>
           
-          {/* Quick NFSU prefix chips */}
-          <div className="flex gap-2 mt-3">
-            {['NFSU', '1001', '1002'].map((prefix) => (
+          {/* Quick NFSU prefix chips from DEMO_CONFIG */}
+          <div className="flex gap-2 mt-3 flex-wrap">
+            <button
+              onClick={() => {
+                playScanBeep();
+                setValue((prev) => prev ? prev + 'NFSU' : 'NFSU');
+              }}
+              className="px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-semibold text-slate-700"
+            >
+              +NFSU
+            </button>
+            {DEMO_CONFIG.patrons.map((p) => (
               <button
-                key={prefix}
+                key={p.id}
                 onClick={() => {
                   playScanBeep();
-                  setValue((prev) => prev ? prev + prefix : prefix);
+                  setValue(p.id);
                 }}
-                className="px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-semibold text-slate-700"
+                className="px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-mono font-semibold text-slate-700"
               >
-                +{prefix}
+                {p.id}
               </button>
             ))}
           </div>

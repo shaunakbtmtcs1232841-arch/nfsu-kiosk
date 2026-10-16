@@ -1,0 +1,4 @@
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
+const file=path.resolve('logs/transactions.jsonl');
+export function audit(e){fs.mkdirSync(path.dirname(file),{recursive:true});const patronHash=e.patronId?crypto.createHash('sha256').update(e.patronId+new Date().toISOString().slice(0,10)).digest('hex').slice(0,12):undefined;const {patronId,...safe}=e;fs.appendFileSync(file,JSON.stringify({...safe,patronHash,ts:new Date().toISOString()})+'\n');}
+export function stats(){let rows=[];try{rows=fs.readFileSync(file,'utf8').split(/\r?\n/).filter(Boolean).map(JSON.parse).filter(x=>x.ts?.slice(0,10)===new Date().toISOString().slice(0,10));}catch{}const counts={};for(const x of rows)counts[x.type]=(counts[x.type]||0)+1;return {counts,successRate:rows.length?rows.filter(x=>x.ok).length/rows.length:0,avgLatencyMs:rows.length?rows.reduce((s,x)=>s+(x.latencyMs||0),0)/rows.length:0,lastEvents:rows.slice(-20).reverse()};}

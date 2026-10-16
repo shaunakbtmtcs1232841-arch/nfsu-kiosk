@@ -7,13 +7,13 @@ const v=(code,value='')=>`${code}${value}|`;
 export const build={
  login:(user,pass,loc,seq=0,cs=false)=>finish(`9300CN${user}|CO${pass}|CP${loc}|`,seq,cs),
  scStatus:(seq=0,cs=false)=>finish('9900802.00',seq,cs),
- patronInformation:(id,pw='',seq=0,cs=false)=>finish(`63001${'NNYNNNNNNN'}AA${id}|${pw?`AD${pw}|`:''}`,seq,cs),
- patronStatus:(id,pw='',seq=0,cs=false)=>finish(`23001${sipDate()}AA${id}|${pw?`AD${pw}|`:''}`,seq,cs),
+ patronInformation:(id,pw='',institution='',terminalPassword='',seq=0,cs=false)=>finish(`63001${sipDate()}  Y       ${v('AO',institution)}${v('AA',id)}${v('AC',terminalPassword)}${pw?v('AD',pw):''}`,seq,cs),
+ patronStatus:(id,pw='',institution='',seq=0,cs=false)=>finish(`23001${sipDate()}${v('AO',institution)}${v('AA',id)}${pw?v('AD',pw):''}`,seq,cs),
  checkout:(id,item,loc,term='',seq=0,cs=false)=>finish(`11NN${sipDate()}                  ${sipDate()}${v('AO',loc)}${v('AA',id)}${v('AB',item)}${v('AC',term)}${v('AD','')}`,seq,cs),
- checkin:(item,loc,term='',seq=0,cs=false)=>finish(`09N${sipDate()}${v('AP',loc)}${v('AO',loc)}${v('AB',item)}${v('AC',term)}`,seq,cs),
+ checkin:(item,location,institution,term='',seq=0,cs=false)=>finish(`09N${sipDate()}${v('AP',location)}${v('AO',institution)}${v('AB',item)}${v('AC',term)}`,seq,cs),
  renew:(id,item,loc,term='',seq=0,cs=false)=>finish(`29NN${sipDate()}${sipDate()}${v('AO',loc)}${v('AA',id)}${v('AB',item)}${v('AC',term)}`,seq,cs),
  itemInformation:(item,loc,seq=0,cs=false)=>finish(`17${sipDate()}${v('AO',loc)}${v('AB',item)}`,seq,cs),
- endPatronSession:(id,seq=0,cs=false)=>finish(`35${v('AA',id)}`,seq,cs)
+ endPatronSession:(id,institution='',seq=0,cs=false)=>finish(`35${sipDate()}${v('AO',institution)}${v('AA',id)}`,seq,cs)
 };
 function finish(m,s,c){return c?addChecksum(m,s):m+'\r';}
 const fixed={12:[['ok',1],['renewalOk',1],['magneticMedia',1],['desensitize',1],['date',18]],10:[['ok',1],['resensitize',1],['magneticMedia',1],['alert',1],['date',18]],64:[['patronStatus',14],['language',3],['date',18],['holdCount',4],['overdueCount',4],['chargedCount',4],['fineCount',4],['recallCount',4],['unavailableCount',4]],18:[['circulationStatus',2],['securityMarker',2],['feeType',2],['date',18]],98:[['ok',1],['date',18]]};

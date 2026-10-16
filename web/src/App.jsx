@@ -5,6 +5,8 @@ import { PatronHomeScreen } from './screens/PatronHomeScreen.jsx';
 import { BorrowScreen } from './screens/BorrowScreen.jsx';
 import { ReturnScreen } from './screens/ReturnScreen.jsx';
 import { SummaryScreen } from './screens/SummaryScreen.jsx';
+import { StaffDashboard } from './screens/StaffDashboard.jsx';
+import { GateSimulator } from './screens/GateSimulator.jsx';
 import { KeypadModal } from './components/KeypadModal.jsx';
 import { SessionTimeoutModal } from './components/SessionTimeoutModal.jsx';
 import { api, setForceMock } from './api/index.js';
@@ -479,21 +481,17 @@ export function App() {
         )}
 
         {screen === 'staff' && (
-          <div className="p-8 text-center">
-            <h2 className="text-3xl font-bold">Staff Console (P1 Route)</h2>
-            <button onClick={() => setScreen('idle')} className="mt-4 px-6 py-3 bg-nfsu-navy text-white rounded-xl">
-              Back to Kiosk
-            </button>
-          </div>
+          <StaffDashboard
+            onBackToKiosk={() => setScreen('idle')}
+            lang={lang}
+          />
         )}
 
         {screen === 'gate' && (
-          <div className="p-8 text-center">
-            <h2 className="text-3xl font-bold">Security Gate (P1 Route)</h2>
-            <button onClick={() => setScreen('idle')} className="mt-4 px-6 py-3 bg-nfsu-navy text-white rounded-xl">
-              Back to Kiosk
-            </button>
-          </div>
+          <GateSimulator
+            onBackToKiosk={() => setScreen('idle')}
+            lang={lang}
+          />
         )}
 
         {screen === 'face' && (
